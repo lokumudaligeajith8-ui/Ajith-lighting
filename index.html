@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajith Lighting & Decoration Rental & Sell</title>
+  <!-- Font Awesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body {
+      background-color: #050b14;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      color: #ffffff;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Glowing Background Orbs */
+    .bg-glow-1, .bg-glow-2 {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      animation: pulseGlow 10s infinite alternate ease-in-out;
+    }
+
+    .bg-glow-1 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, #00bfff 0%, rgba(0, 0, 0, 0) 70%);
+      top: -100px;
+      right: -100px;
+    }
+
+    .bg-glow-2 {
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, #ff0055 0%, rgba(0, 0, 0, 0) 70%);
+      bottom: -150px;
+      left: 150px;
+      animation-delay: -5s;
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.25; }
+      100% { transform: scale(1.3) translate(-30px, 40px); opacity: 0.45; }
+    }
+
+    /* Canvas Container */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Left Sidebar Menu */
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background-color: rgba(13, 21, 39, 0.95);
+      backdrop-filter: blur(10px);
+      border-right: 2px solid #00bfff;
+      padding: 20px 10px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      box-sizing: border-box;
+      z-index: 100;
+      box-shadow: 5px 0 15px rgba(0, 191, 255, 0.2);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .menu-item {
+      margin-bottom: 8px;
+    }
+
+    .menu-item a {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .menu-item a i {
+      margin-right: 12px;
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+      color: #00bfff;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .menu-item a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 0;
+      background: #00bfff;
+      box-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+      transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .menu-item a:hover {
+      color: #ffffff;
+      background: linear-gradient(90deg, rgba(0, 191, 255, 0.2) 0%, rgba(0, 191, 255, 0) 100%);
+      transform: translateX(8px);
+    }
+
+    .menu-item a:hover i {
+      transform: scale(1.2);
+      color: #ffffff;
+    }
+
+    .menu-item a:hover::before {
+      height: 100%;
+    }
+
+    .menu-item a.active-link {
+      background: linear-gradient(90deg, rgba(0, 191, 255, 0.35) 0%, rgba(0, 191, 255, 0.05) 100%);
+      color: #ffffff;
+      box-shadow: inset 0 0 10px rgba(0, 191, 255, 0.3);
+      transform: translateX(8px);
+    }
+
+    .menu-item a.active-link i {
+      color: #ffffff;
+    }
+
+    .menu-item a.active-link::before {
+      height: 100%;
+    }
+
+    .cart-badge {
+      background-color: #ff0055;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 8px;
+      font-size: 12px;
+      margin-left: auto;
+      box-shadow: 0 0 8px #ff0055;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+      width: calc(100% - 250px);
+      box-sizing: border-box;
+      position: relative;
+      z-index: 2;
+    }
+
+    .page-section {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .page-section.active-section {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .greeting-card {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto 20px auto;
+      background: rgba(13, 21, 39, 0.8);
+      backdrop-filter: blur(8px);
+      padding: 18px 25px;
+      border-radius: 12px;
+      border: 1px solid #00bfff;
+      box-sizing: border-box;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .greeting-card h2 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      color: #ffffff;
+      text-shadow: 0 0 8px #00bfff;
+    }
+
+    /* Dynamic Owner Visibility Control */
+    .owner-only {
+      display: none !important;
+    }
+
+    body.is-owner .owner-only {
+      display: inline-flex !important;
+    }
+
+    body.is-owner div.owner-only {
+      display: flex !important;
+    }
+
+    .edit-sec-btn {
+      background: rgba(0, 191, 255, 0.2);
+      border: 1px solid #00bfff;
+      color: #00bfff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.3s;
+    }
+
+    .edit-sec-btn:hover {
+      background: #00bfff;
+      color: #fff;
+      box-shadow: 0 0 10px #00bfff;
+    }
+
+    /* Contact Grid */
+    .contact-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .contact-card {
+      background: rgba(13, 21, 39, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid #00bfff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.25);
+      box-sizing: border-box;
+    }
+
+    .contact-card h3 {
+      color: #00bfff;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 22px;
+      text-shadow: 0 0 8px #00bfff;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .info-item i {
+      font-size: 20px;
+      color: #00bfff;
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 191, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 15px;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+      flex-shrink: 0;
+    }
+
+    .info-item p {
+      margin: 0;
+      color: #d0dbe5;
+      font-size: 15px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .info-item strong {
+      color: #ffffff;
+      display: block;
+    }
+
+    .contact-form label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #a0aec0;
+    }
+
+    .contact-form input, 
+    .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #1a2a47;
+      background: #050b14;
+      color: #ffffff;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .contact-form input:focus, 
+    .contact-form textarea:focus {
+      border-color: #00bfff;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
+    }
+
+    .send-msg-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #00bfff;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .send-msg-btn:hover {
+      background-color: #0099cc;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+    }
+
+    /* Gallery & Item Grid Styling */
+    .gallery-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .gallery-card {
+      background: rgba(13, 21, 39, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1a2a47;
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-8px);
+      border-color: #00bfff;
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
+    }
+
+    .gallery-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-info {
+      padding: 15px;
+      flex-grow: 1;
+    }
+
+    .gallery-info h3 {
+      margin: 0 0 8px 0;
+      color: #00bfff;
+      font-size: 18px;
+    }
+
+    .stars-display {
+      color: #ffdd00;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .stars-display span {
+      color: #a0aec0;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+
+    .gallery-info .item-desc {
+      color: #a0aec0;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .gallery-info .price-tag {
+      font-size: 16px;
+      font-weight: bold;
+      color: #25d366;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      padding: 0 15px 15px 15px;
+    }
+
+    .add-cart-btn {
+      flex: 1;
+      padding: 10px;
+      background-color: #00bfff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .add-cart-btn:hover {
+      background-color: #0099cc;
+      box-shadow: 0 0 12px rgba(0, 191, 255, 0.6);
+    }
+
+    .view-btn {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #00bfff;
+      border: 1px solid #00bfff;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .view-btn:hover {
+      background-color: #00bfff;
+      color: #fff;
+    }
+
+    .delete-item-btn {
+      background-color: rgba(255, 0, 85, 0.2);
+      color: #ff0055;
+      border: 1px solid #ff0055;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .delete-item-btn:hover {
+      background-color: #ff0055;
+      color: #fff;
+      box-shadow: 0 0 10px #ff0055;
+    }
+
+    /* Floating Owner Action (+) Button */
+    .owner-float-btn {
+      position: fixed;
+      bottom: 35px;
+      right: 35px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #00bfff, #0055ff);
+      color: #ffffff;
+      border-radius: 50%;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      box-shadow: 0 0 20px #00bfff;
+      cursor: pointer;
+      z-index: 999;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .owner-float-btn:hover {
+      transform: scale(1.15) rotate(90deg);
+      box-shadow: 0 0 30px #00bfff, 0 0 40px #ff0055;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-box {
+      background: #0d1527;
+      padding: 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 550px;
+      border: 2px solid #00bfff;
+      box-shadow: 0 0 25px rgba(0, 191, 255, 0.5);
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-box h3 {
+      margin-top: 0;
+      color: #00bfff;
+    }
+
+    .modal-box label {
+      display: block;
+      margin: 10px 0 5px 0;
+      font-size: 14px;
+      color: #a0aec0;
+    }
+
+    .modal-box input, .modal-box textarea, .modal-box select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #1a2a47;
+      background: #050b14;
+      color: #fff;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus {
+      border-color: #00bfff;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .confirm-btn {
+      flex: 1;
+      background-color: #25d366;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .cancel-btn {
+      flex: 1;
+      background-color: #e53e3e;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Tab Switcher inside Auth Modal */
+    .auth-tab {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #1a2a47;
+    }
+
+    .auth-tab div {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      color: #a0aec0;
+      font-weight: bold;
+    }
+
+    .auth-tab div.active-tab {
+      color: #00bfff;
+      border-bottom: 2px solid #00bfff;
+    }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(0, 191, 255, 0.1);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .user-profile-badge i {
+      color: #00bfff;
+      font-size: 18px;
+    }
+
+    .product-detail-img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #00bfff;
+    }
+
+    .interactive-rating {
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(5, 11, 20, 0.6);
+      border-radius: 8px;
+      border: 1px solid #1a2a47;
+    }
+
+    .star-select {
+      font-size: 22px;
+      color: #a0aec0;
+      cursor: pointer;
+    }
+
+    .star-select i.active {
+      color: #ffdd00;
+    }
+
+    .reviews-list {
+      margin-top: 15px;
+      max-height: 150px;
+      overflow-y: auto;
+      border-top: 1px solid #1a2a47;
+      padding-top: 10px;
+    }
+
+    .review-item {
+      background: #050b14;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .review-item strong {
+      color: #00bfff;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #050b14;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      border: 1px solid #1a2a47;
+    }
+
+    .logo img {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 120px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00bfff;
+      z-index: 10;
+    }
+
+    @media screen and (max-width: 768px) {
+      body { flex-direction: column; }
+      .logo img { position: static; display: block; margin: 15px auto 5px auto; width: 90px; }
+      .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid #00bfff; padding: 10px; }
+      .menu-list { display: flex; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; }
+      .menu-item { margin-bottom: 0; margin-right: 8px; flex-shrink: 0; }
+      .menu-item a { padding: 8px 12px; font-size: 13px; white-space: nowrap; }
+      .main-content { margin-left: 0; width: 100%; padding: 15px 10px; }
+      .gallery-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dynamic Background Glowing Lights -->
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Top Right Logo -->
+  <div class="logo">
+    <img src="file:///F:/@graphic desing/New folder/original.jpg" alt="logo" onerror="this.src='https://via.placeholder.com/120x120?text=Ajith+Lighting'">
+  </div>
+
+  <!-- Left Sidebar Navigation -->
+  <div class="sidebar">
+    <div>
+      <div id="userProfileBadge" class="user-profile-badge">
+        <i class="fa-solid fa-user-circle"></i>
+        <span id="userNameDisplay">Guest User</span>
+      </div>
+
+      <ul class="menu-list">
+        <li class="menu-item"><a onclick="showSection('home', this)" class="active-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li class="menu-item"><a onclick="openCartModal()"><i class="fa-solid fa-cart-shopping"></i> View Cart <span class="cart-badge" id="cartCount">0</span></a></li>
+        <li class="menu-item"><a onclick="showSection('shop', this)"><i class="fa-solid fa-bag-shopping"></i> Shop</a></li>
+        <li class="menu-item"><a onclick="showSection('rental', this)"><i class="fa-solid fa-lightbulb"></i> Rental items</a></li>
+        <li class="menu-item"><a onclick="showSection('process', this)"><i class="fa-solid fa-gears"></i> Our process</a></li>
+        <li class="menu-item"><a onclick="showSection('contact', this)"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+        <li class="menu-item"><a onclick="showSection('donation', this)"><i class="fa-solid fa-hand-holding-heart"></i> Donation</a></li>
+        <li class="menu-item"><a onclick="showSection('social', this)"><i class="fa-solid fa-share-nodes"></i> Social Media</a></li>
+        <li class="menu-item"><a onclick="showSection('about', this)"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+        <li class="menu-item"><a onclick="showSection('questions', this)"><i class="fa-solid fa-circle-question"></i> Any Questions</a></li>
+      </ul>
+    </div>
+
+    <!-- User Login / Signup / Logout Link at Sidebar Bottom -->
+    <div style="padding-top: 15px; border-top: 1px solid #1a2a47; margin-top: 15px;">
+      <a id="ownerLoginBtn" onclick="handleUserAuthAction()" style="color: #00bfff; cursor: pointer; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-right-to-bracket" id="authBtnIcon"></i> <span id="authBtnText">Login / Sign Up</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Owner Floating Action (+) Button (Hidden for Normal Users) -->
+  <div class="owner-float-btn owner-only" onclick="openOwnerItemModal()" title="Add / Manage Items">
+    <i class="fa-solid fa-plus"></i>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    
+    <!-- HOME SECTION -->
+    <div id="home" class="page-section active-section">
+      <div class="greeting-card">
+        <div>
+          <h2 id="home-title">Welcome to Ajith Lighting</h2>
+          <p id="home-desc">Ajith Lighting is rental light shop. We're since 2017 in the industry.</p>
+        </div>
+        <button class="edit-sec-btn owner-only" onclick="openHeaderEdit('home')"><i class="fa-solid fa-pen"></i> Edit</button>
+      </div>
+    </div>
+
+    <!-- SHOP SECTION WITH PRODUCTS & RATINGS -->
+    <div id="shop" class="page-section">
+      <div class="greeting-card">
+        <div>
+          <h2 id="shop-title">Shop Items for Sale</h2>
+          <p id="shop-desc">අයිතමයක් මත Click කර එහි සම්පූර්ණ විස්තර බලන්න, Rate කරන්න, සහ Order කරන්න.</p>
+        </div>
+        <button class="edit-sec-btn owner-only" onclick="openHeaderEdit('shop')"><i class="fa-solid fa-pen"></i> Edit</button>
+      </div>
+      <div class="gallery-container" id="shopGallery"></div>
+    </div>
+
+    <!-- RENTAL ITEMS SECTION -->
+    <div id="rental" class="page-section">
+      <div class="greeting-card">
+        <div>
+          <h2 id="rental-title">Rental Lighting Items</h2>
+          <p id="rental-desc">කුලියට ලබාගත හැකි සැරසිලි ආලෝකකරණ උපාංග.</p>
+        </div>
+        <button class="edit-sec-btn owner-only" onclick="openHeaderEdit('rental')"><i class="fa-solid fa-pen"></i> Edit</button>
+      </div>
+      <div class="gallery-container" id="rentalGallery"></div>
+    </div>
+
+    <!-- CONTACT SECTION -->
+    <div id="contact" class="page-section">
+      <div class="greeting-card">
+        <div>
+          <h2 id="contact-title">Contact Us</h2>
+          <p id="contact-desc">Get in touch with us for lighting rental inquiries or custom orders.</p>
+        </div>
+        <button class="edit-sec-btn owner-only" onclick="openHeaderEdit('contact')"><i class="fa-solid fa-pen"></i> Edit</button>
+      </div>
+
+      <div class="contact-container">
+        <div class="contact-card">
+          <h3>Contact Details</h3>
+          <div class="info-item"><i class="fa-solid fa-phone"></i><div><strong>Phone Number</strong><p>+94 77 966 6326</p></div></div>
+          <div class="info-item"><i class="fa-brands fa-whatsapp"></i><div><strong>WhatsApp</strong><p>+94 77 966 6326</p></div></div>
+          <div class="info-item"><i class="fa-solid fa-envelope"></i><div><strong>Email Address</strong><p>ajithlighting@gmail.com</p></div></div>
+          <div class="info-item"><i class="fa-solid fa-location-dot"></i><div><strong>Our Location</strong><p>Ajith Lighting & Decoration, Main Street, Sri Lanka.</p></div></div>
+        </div>
+
+        <div class="contact-card">
+          <h3>Send Us a Message</h3>
+          <form class="contact-form" onsubmit="sendContactForm(event)">
+            <label>Your Name:</label>
+            <input type="text" id="contactName" placeholder="Enter your name" required>
+            <label>Phone / WhatsApp Number:</label>
+            <input type="text" id="contactPhone" placeholder="07X XXXXXXX" required>
+            <label>Your Message:</label>
+            <textarea id="contactMsg" rows="4" placeholder="Write message..." required></textarea>
+            <button type="submit" class="send-msg-btn"><i class="fa-brands fa-whatsapp"></i> Send via WhatsApp</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Sections -->
+    <div id="process" class="page-section"><div class="greeting-card"><div><h2 id="process-title">Our Process</h2><p id="process-desc">Details regarding process.</p></div><button class="edit-sec-btn owner-only" onclick="openHeaderEdit('process')"><i class="fa-solid fa-pen"></i> Edit</button></div></div>
+    <div id="donation" class="page-section"><div class="greeting-card"><div><h2 id="donation-title">Donations</h2><p id="donation-desc">Details regarding donation.</p></div><button class="edit-sec-btn owner-only" onclick="openHeaderEdit('donation')"><i class="fa-solid fa-pen"></i> Edit</button></div></div>
+    <div id="social" class="page-section"><div class="greeting-card"><div><h2 id="social-title">Social Media</h2><p id="social-desc">Details regarding social accounts.</p></div><button class="edit-sec-btn owner-only" onclick="openHeaderEdit('social')"><i class="fa-solid fa-pen"></i> Edit</button></div></div>
+    <div id="about" class="page-section"><div class="greeting-card"><div><h2 id="about-title">About Us</h2><p id="about-desc">Details regarding company.</p></div><button class="edit-sec-btn owner-only" onclick="openHeaderEdit('about')"><i class="fa-solid fa-pen"></i> Edit</button></div></div>
+    <div id="questions" class="page-section"><div class="greeting-card"><div><h2 id="questions-title">Questions</h2><p id="questions-desc">Frequently Asked Questions.</p></div><button class="edit-sec-btn owner-only" onclick="openHeaderEdit('questions')"><i class="fa-solid fa-pen"></i> Edit</button></div></div>
+
+  </div>
+
+  <!-- AUTHENTICATION (LOGIN / SIGNUP) MODAL -->
+  <div id="authModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="auth-tab">
+        <div id="loginTabBtn" class="active-tab" onclick="switchAuthTab('login')">Login</div>
+        <div id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <h3>Account Login</h3>
+        <label>Email Address:</label>
+        <input type="email" id="loginEmail" placeholder="Enter Email Address">
+        <label>Password:</label>
+        <input type="password" id="loginPass" placeholder="Enter Password">
+        <div class="modal-actions">
+          <button class="confirm-btn" onclick="submitLogin()">Login</button>
+          <button class="cancel-btn" onclick="closeModal('authModal')">Cancel</button>
+        </div>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" style="display: none;">
+        <h3>Create New Account</h3>
+        <label>Your Name:</label>
+        <input type="text" id="signupName" placeholder="Enter full name">
+        <label>Email Address:</label>
+        <input type="email" id="signupEmail" placeholder="Enter email address">
+        <label>Password:</label>
+        <input type="password" id="signupPass" placeholder="Create password">
+        <div class="modal-actions">
+          <button class="confirm-btn" onclick="submitSignup()">Sign Up</button>
+          <button class="cancel-btn" onclick="closeModal('authModal')">Cancel</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OWNER ADD ITEM MODAL -->
+  <div id="ownerAddModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Owner Panel - Add New Item</h3>
+      <label>Choose Section / Category:</label>
+      <select id="newItemCat">
+        <option value="sale">Shop Items (For Sale)</option>
+        <option value="rental">Rental Items</option>
+      </select>
+
+      <label>Item Title (නම):</label>
+      <input type="text" id="newItemTitle" placeholder="Ex: 50W Outdoor Flood Light">
+
+      <label>Image Source / Path (පින්තූර Link එක):</label>
+      <input type="text" id="newItemImg" placeholder="https://images.unsplash.com/...">
+
+      <label>Description (විස්තරය):</label>
+      <textarea id="newItemDesc" rows="3" placeholder="අයිතමයේ විස්තරය ලියන්න..."></textarea>
+
+      <label>Price LKR (මිල):</label>
+      <input type="number" id="newItemPrice" placeholder="1200">
+
+      <div class="modal-actions">
+        <button class="confirm-btn" onclick="saveNewItem()">Add to Website</button>
+        <button class="cancel-btn" onclick="closeModal('ownerAddModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER TEXT EDITOR MODAL -->
+  <div id="headerEditModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Edit Section Details</h3>
+      <input type="hidden" id="activeSectionId">
+      <label>Title:</label>
+      <input type="text" id="editHeaderTitle">
+      <label>Description:</label>
+      <textarea id="editHeaderDesc" rows="3"></textarea>
+      <div class="modal-actions">
+        <button class="confirm-btn" onclick="saveHeaderEdit()">Save Changes</button>
+        <button class="cancel-btn" onclick="closeModal('headerEditModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT DETAIL & RATING MODAL POPUP -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 id="modalTitle">Product Name</h3>
+      <img id="modalImg" src="" class="product-detail-img" alt="Product Image">
+      <p id="modalDesc" style="color: #a0aec0; font-size: 14px; line-height: 1.5;"></p>
+      <div id="modalPrice" style="font-size: 18px; font-weight: bold; color: #25d366; margin-bottom: 10px;"></div>
+
+      <div class="interactive-rating">
+        <h4 style="margin: 0 0 8px 0; color: #00bfff;">Rate this product</h4>
+        <div class="star-select" id="starSelector">
+          <i class="fa-solid fa-star" onclick="setRating(1)"></i>
+          <i class="fa-solid fa-star" onclick="setRating(2)"></i>
+          <i class="fa-solid fa-star" onclick="setRating(3)"></i>
+          <i class="fa-solid fa-star" onclick="setRating(4)"></i>
+          <i class="fa-solid fa-star" onclick="setRating(5)"></i>
+        </div>
+        <input type="text" id="reviewerName" placeholder="Your Name" style="margin-top: 10px;">
+        <textarea id="reviewerComment" rows="2" placeholder="Write a review..." style="margin-top: 5px;"></textarea>
+        <button class="add-cart-btn" style="margin-top: 8px; width: 100%;" onclick="submitReview()">Submit Rating & Review</button>
+      </div>
+
+      <div class="reviews-list">
+        <h4 style="margin: 0 0 8px 0; color: #00bfff;">Customer Reviews</h4>
+        <div id="reviewsContainer"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="confirm-btn" id="modalAddToCartBtn"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>
+        <button class="cancel-btn" onclick="closeModal('productModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOPPING CART MODAL POPUP -->
+  <div id="cartModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Your Cart Items</h3>
+      <div id="cartItemsList"></div>
+
+      <div style="margin-top: 15px; font-weight: bold; color: #00bfff;">
+        Total: LKR <span id="cartTotalPrice">0</span>
+      </div>
+
+      <hr style="border-color: #1a2a47; margin: 15px 0;">
+
+      <label>Your Name (ඔබගේ නම):</label>
+      <input type="text" id="custName" placeholder="John Doe">
+
+      <label>Phone Number (දුරකථන අංකය):</label>
+      <input type="text" id="custPhone" placeholder="07X XXXXXXX">
+
+      <label>Delivery Address (ලිපිනය):</label>
+      <textarea id="custAddress" rows="2" placeholder="Enter full address"></textarea>
+
+      <div class="modal-actions">
+        <button class="confirm-btn" onclick="sendCartOrder()">Checkout via WhatsApp</button>
+        <button class="cancel-btn" onclick="closeModal('cartModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Database & Accounts System via LocalStorage & SessionStorage */
+    let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [
+      { name: "Owner Ajith", email: "lokumudaligeajith8@gmail.com", pass: "isuru12345678@", isOwner: true }
+    ];
+
+    let currentUser = JSON.parse(sessionStorage.getItem('currentUser')) || null;
+
+    function checkAuthState() {
+      if(currentUser) {
+        document.getElementById('userNameDisplay').innerText = currentUser.name;
+        document.getElementById('authBtnText').innerText = "Logout";
+        document.getElementById('authBtnIcon').className = "fa-solid fa-right-from-bracket";
+        
+        if(currentUser.isOwner) {
+          document.body.classList.add('is-owner');
+        } else {
+          document.body.classList.remove('is-owner');
+        }
+      } else {
+        document.getElementById('userNameDisplay').innerText = "Guest User";
+        document.getElementById('authBtnText').innerText = "Login / Sign Up";
+        document.getElementById('authBtnIcon').className = "fa-solid fa-right-to-bracket";
+        document.body.classList.remove('is-owner');
+      }
+    }
+
+    function handleUserAuthAction() {
+      if(currentUser) {
+        if(confirm("ඔබට Logout වීමට අවශ්‍යද?")) {
+          currentUser = null;
+          sessionStorage.removeItem('currentUser');
+          checkAuthState();
+          renderProducts();
+        }
+      } else {
+        document.getElementById('authModal').style.display = 'flex';
+      }
+    }
+
+    function switchAuthTab(type) {
+      if(type === 'login') {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+        document.getElementById('loginTabBtn').classList.add('active-tab');
+        document.getElementById('signupTabBtn').classList.remove('active-tab');
+      } else {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+        document.getElementById('signupTabBtn').classList.add('active-tab');
+        document.getElementById('loginTabBtn').classList.remove('active-tab');
+      }
+    }
+
+    function submitSignup() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pass = document.getElementById('signupPass').value.trim();
+
+      if(!name || !email || !pass) return alert("කරුණාකර සියලු විස්තර ඇතුළත් කරන්න.");
+
+      const existingUser = registeredUsers.find(u => u.email === email);
+      if(existingUser) return alert("මෙම Email එකෙන් මීට පෙර Account එකක් සාදා ඇත!");
+
+      const isOwner = (email === "lokumudaligeajith8@gmail.com" && pass === "isuru12345678@");
+
+      const newUser = { name, email, pass, isOwner };
+      registeredUsers.push(newUser);
+      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+      currentUser = newUser;
+      sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+      checkAuthState();
+      renderProducts();
+      closeModal('authModal');
+      alert(`සාර්ථකයි! සාදරයෙන් පිළිගනිමු, ${name}`);
+
+      document.getElementById('signupName').value = '';
+      document.getElementById('signupEmail').value = '';
+      document.getElementById('signupPass').value = '';
+    }
+
+    function submitLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+
+      const user = registeredUsers.find(u => u.email === email && u.pass === pass);
+
+      if(user) {
+        currentUser = user;
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+        checkAuthState();
+        renderProducts();
+        closeModal('authModal');
+        alert(`සාර්ථකව Log විය! පිළිගනිමු, ${user.name}`);
+        
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPass').value = '';
+      } else {
+        alert("Email හෝ Password වැරදියි! කරුණාකර නැවත උත්සාහ කරන්න.");
+      }
+    }
+
+    /* Data Storage with LocalStorage Persistence */
+    let shopProducts = JSON.parse(localStorage.getItem('shopProducts')) || [
+      { id: 1, title: "5M RGB LED Strip Light", img: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=500&q=80", desc: "ජලයට ඔරොත්තු දෙන Waterproof RGB Strip Light එකක්.", price: 1200, type: 'sale', rating: 4.8, reviews: [{ name: "Saman P.", rating: 5, comment: "Very good quality lighting!" }] },
+      { id: 2, title: "50W Outdoor Flood Light", img: "https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=500&q=80", desc: "උත්සව සඳහා සුදුසු එළිමහන් Flood Light එකක්.", price: 3800, type: 'sale', rating: 4.5, reviews: [] }
+    ];
+
+    let rentalProducts = JSON.parse(localStorage.getItem('rentalProducts')) || [
+      { id: 101, title: "Decorative Light Set (Rental)", img: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=500&q=80", desc: "තොරණ සහ විශාල උත්සව සැරසිලි සඳහා ආලෝක පද්ධතිය.", price: 5000, type: 'rental', rating: 4.9, reviews: [] }
+    ];
+
+    let cart = [];
+    let currentSelectedProduct = null;
+    let selectedRatingStars = 5;
+
+    function saveProductsToStorage() {
+      localStorage.setItem('shopProducts', JSON.stringify(shopProducts));
+      localStorage.setItem('rentalProducts', JSON.stringify(rentalProducts));
+    }
+
+    function renderProducts() {
+      const shopContainer = document.getElementById('shopGallery');
+      const rentalContainer = document.getElementById('rentalGallery');
+      
+      shopContainer.innerHTML = '';
+      rentalContainer.innerHTML = '';
+
+      shopProducts.forEach(prod => shopContainer.appendChild(createProductCard(prod)));
+      rentalProducts.forEach(prod => rentalContainer.appendChild(createProductCard(prod)));
+    }
+
+    function createProductCard(prod) {
+      const card = document.createElement('div');
+      card.className = 'gallery-card';
+      const priceDisplay = prod.price > 0 ? `LKR ${prod.price.toLocaleString()}.00` : 'Contact for Price';
+      
+      card.innerHTML = `
+        <img src="${prod.img}" alt="${prod.title}" onclick="openProductDetail(${prod.id}, '${prod.type}')" onerror="this.src='https://via.placeholder.com/300x200?text=Ajith+Lighting'">
+        <div class="gallery-info" onclick="openProductDetail(${prod.id}, '${prod.type}')">
+          <h3>${prod.title}</h3>
+          <div class="stars-display">
+            <i class="fa-solid fa-star"></i> ${prod.rating} <span>(${prod.reviews ? prod.reviews.length : 0} Reviews)</span>
+          </div>
+          <p class="item-desc">${prod.desc}</p>
+          <div class="price-tag">${priceDisplay}</div>
+        </div>
+        <div class="btn-group">
+          <button class="add-cart-btn" onclick="addToCart('${prod.title}', ${prod.price}); event.stopPropagation();">
+            <i class="fa-solid fa-cart-plus"></i> Add
+          </button>
+          <button class="view-btn" onclick="openProductDetail(${prod.id}, '${prod.type}'); event.stopPropagation();">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+          <button class="delete-item-btn owner-only" onclick="deleteItem(${prod.id}, '${prod.type}'); event.stopPropagation();">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      `;
+      return card;
+    }
+
+    /* Modal Controls */
+    function openOwnerItemModal() {
+      document.getElementById('ownerAddModal').style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function saveNewItem() {
+      const cat = document.getElementById('newItemCat').value;
+      const title = document.getElementById('newItemTitle').value.trim();
+      const img = document.getElementById('newItemImg').value.trim() || 'https://via.placeholder.com/300x200?text=Ajith+Lighting';
+      const desc = document.getElementById('newItemDesc').value.trim();
+      const price = parseFloat(document.getElementById('newItemPrice').value) || 0;
+
+      if(!title) return alert("කරුණාකර Item එකට නමක් ලබාදෙන්න.");
+
+      const newItem = {
+        id: Date.now(),
+        title, img, desc, price,
+        type: cat,
+        rating: 5.0,
+        reviews: []
+      };
+
+      if(cat === 'sale') shopProducts.push(newItem);
+      else rentalProducts.push(newItem);
+
+      saveProductsToStorage();
+      renderProducts();
+      closeModal('ownerAddModal');
+
+      document.getElementById('newItemTitle').value = '';
+      document.getElementById('newItemImg').value = '';
+      document.getElementById('newItemDesc').value = '';
+      document.getElementById('newItemPrice').value = '';
+    }
+
+    function deleteItem(id, type) {
+      if(!confirm("ඔබට මෙම Item එක මුලුමනින්ම ඉවත් කිරීමට අවශ්‍යද?")) return;
+      
+      if(type === 'sale') {
+        shopProducts = shopProducts.filter(p => p.id !== id);
+      } else {
+        rentalProducts = rentalProducts.filter(p => p.id !== id);
+      }
+      
+      saveProductsToStorage();
+      renderProducts();
+    }
+
+    /* Header Text Editor */
+    function openHeaderEdit(secId) {
+      document.getElementById('activeSectionId').value = secId;
+      document.getElementById('editHeaderTitle').value = document.getElementById(`${secId}-title`).innerText;
+      document.getElementById('editHeaderDesc').value = document.getElementById(`${secId}-desc`).innerText;
+      document.getElementById('headerEditModal').style.display = 'flex';
+    }
+
+    function saveHeaderEdit() {
+      const secId = document.getElementById('activeSectionId').value;
+      document.getElementById(`${secId}-title`).innerText = document.getElementById('editHeaderTitle').value;
+      document.getElementById(`${secId}-desc`).innerText = document.getElementById('editHeaderDesc').value;
+      closeModal('headerEditModal');
+    }
+
+    /* Section Navigation */
+    function showSection(sectionId, element) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active-section'));
+      document.getElementById(sectionId).classList.add('active-section');
+      
+      if(element) {
+        document.querySelectorAll('.menu-item a').forEach(a => a.classList.remove('active-link'));
+        element.classList.add('active-link');
+      }
+    }
+
+    /* Product Detail & Reviews */
+    function openProductDetail(id, type) {
+      const list = type === 'sale' ? shopProducts : rentalProducts;
+      currentSelectedProduct = list.find(p => p.id === id);
+      if (!currentSelectedProduct) return;
+
+      document.getElementById('modalTitle').innerText = currentSelectedProduct.title;
+      document.getElementById('modalImg').src = currentSelectedProduct.img;
+      document.getElementById('modalDesc').innerText = currentSelectedProduct.desc;
+      document.getElementById('modalPrice').innerText = currentSelectedProduct.price > 0 ? `LKR ${currentSelectedProduct.price.toLocaleString()}.00` : 'Contact for Price';
+      
+      document.getElementById('modalAddToCartBtn').onclick = function() {
+        addToCart(currentSelectedProduct.title, currentSelectedProduct.price);
+        closeModal('productModal');
+      };
+
+      if(currentUser) {
+        document.getElementById('reviewerName').value = currentUser.name;
+      }
+
+      setRating(5);
+      renderReviews();
+      document.getElementById('productModal').style.display = 'flex';
+    }
+
+    function setRating(stars) {
+      selectedRatingStars = stars;
+      document.querySelectorAll('#starSelector i').forEach((s, idx) => {
+        if(idx < stars) s.classList.add('active');
+        else s.classList.remove('active');
+      });
+    }
+
+    function submitReview() {
+      const name = document.getElementById('reviewerName').value.trim();
+      const comment = document.getElementById('reviewerComment').value.trim();
+
+      if (!name || !comment) return alert("කරුණාකර ඔබගේ නම සහ Review එක සඳහන් කරන්න.");
+
+      if(!currentSelectedProduct.reviews) currentSelectedProduct.reviews = [];
+
+      currentSelectedProduct.reviews.push({ name, rating: selectedRatingStars, comment });
+      
+      const totalStars = currentSelectedProduct.reviews.reduce((acc, r) => acc + r.rating, 0);
+      currentSelectedProduct.rating = (totalStars / currentSelectedProduct.reviews.length).toFixed(1);
+
+      saveProductsToStorage();
+      renderProducts();
+      renderReviews();
+
+      document.getElementById('reviewerComment').value = '';
+    }
+
+    function renderReviews() {
+      const box = document.getElementById('reviewsContainer');
+      box.innerHTML = '';
+      if(!currentSelectedProduct.reviews || currentSelectedProduct.reviews.length === 0) {
+        box.innerHTML = '<p style="color:#a0aec0; font-size:12px;">No reviews yet.</p>';
+        return;
+      }
+      currentSelectedProduct.reviews.forEach(r => {
+        box.innerHTML += `<div class="review-item"><strong>${r.name}</strong> (${r.rating}★)<p style="margin:2px 0 0 0; color:#d0dbe5;">${r.comment}</p></div>`;
+      });
+    }
+
+    /* Cart Logic */
+    function addToCart(title, price) {
+      cart.push({ title, price });
+      document.getElementById('cartCount').innerText = cart.length;
+      alert(`${title} Cart එකට එකතු කරන ලදී!`);
+    }
+
+    function openCartModal() {
+      const list = document.getElementById('cartItemsList');
+      let total = 0;
+      list.innerHTML = '';
+
+      cart.forEach((item, index) => {
+        total += item.price;
+        list.innerHTML += `
+          <div class="cart-item">
+            <span>${item.title} - LKR ${item.price}</span>
+            <span class="cart-item-remove" onclick="removeFromCart(${index})"><i class="fa-solid fa-trash"></i></span>
+          </div>
+        `;
+      });
+
+      if(currentUser) {
+        document.getElementById('custName').value = currentUser.name;
+      }
+
+      document.getElementById('cartTotalPrice').innerText = total.toLocaleString();
+      document.getElementById('cartModal').style.display = 'flex';
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      document.getElementById('cartCount').innerText = cart.length;
+      openCartModal();
+    }
+
+    function sendCartOrder() {
+      if(cart.length === 0) return alert("ඔබගේ Cart එක හිස්ව පවතී!");
+      
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const address = document.getElementById('custAddress').value.trim();
+
+      if (!name || !phone) return alert("කරුණාකර නම සහ දුරකථන අංකය ඇතුළත් කරන්න.");
+
+      let text = `*New Order - Ajith Lighting*\n\n*Name:* ${name}\n*Phone:* ${phone}\n*Address:* ${address}\n\n*Items Ordered:*\n`;
+      let total = 0;
+      cart.forEach((i, idx) => {
+        text += `${idx + 1}. ${i.title} - LKR ${i.price}\n`;
+        total += i.price;
+      });
+      text += `\n*Total Amount:* LKR ${total.toLocaleString()}`;
+
+      window.open(`https://wa.me/94779666326?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function sendContactForm(e) {
+      e.preventDefault();
+      const name = document.getElementById('contactName').value;
+      const phone = document.getElementById('contactPhone').value;
+      const msg = document.getElementById('contactMsg').value;
+      const text = `*Contact Message*\n*Name:* ${name}\n*Phone:* ${phone}\n*Message:* ${msg}`;
+      window.open(`https://wa.me/94779666326?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    /* Background Canvas Particles Animation */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for(let i = 0; i < 40; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5,
+        color: ['#00bfff', '#ff0055', '#ffffff', '#ffdd00'][Math.floor(Math.random()*4)]
+      });
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if(p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if(p.y < 0 || p.y > canvas.height) p.dy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* Initialize Application State */
+    checkAuthState();
+    renderProducts();
+  </script>
+</body>
+</html>
